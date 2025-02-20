@@ -9,7 +9,7 @@ public class Account {
     @Id
     private String accountNumber;
 	private Double solde;
-
+	
     // Getters and Setters obtenus grace à Data
 	public Double getSolde() {
 		return solde;

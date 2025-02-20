@@ -21,7 +21,7 @@ public class TransferController {
 
     
 
-    @PostMapping
+    @PostMapping("/createTransfer")
     public ResponseEntity<?> createTransfer(@RequestBody TransferRequest transferRequest) {
     //public ResponseEntity<Transfer> createTransfer(@RequestBody TransferRequest transferRequest) {
         try {
