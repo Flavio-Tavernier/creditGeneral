@@ -38,16 +38,4 @@ public class TestController {
 
 	}
 	
-	
-	@GetMapping("/accounts")
-	public ResponseEntity<?> getAllAccounts() {
-		List<Account> accounts = accountService.obtenirAllAccounts();
-		
-		if (accounts.isEmpty()) {
-			return new ResponseEntity<String>("Aucun compte", HttpStatusCode.valueOf(500));
-		} else {
-			return new ResponseEntity<List<Account>>(accounts, HttpStatus.OK);
-		}
-	}
-	
 }
