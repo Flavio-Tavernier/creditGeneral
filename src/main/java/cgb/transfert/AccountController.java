@@ -21,13 +21,25 @@ public class AccountController {
     public AccountController(AccountService accountService) {
         this.accountService = accountService;
     }
+    
+    
+    @GetMapping("/{id}")
+	public ResponseEntity<?> getAccountById(@PathVariable String id) {
+		Account account = accountService.getAccountById(id);
+		
+		if (account == null) {
+			return new ResponseEntity<String>("Aucun compte", HttpStatusCode.valueOf(404));
+		} else {
+			return new ResponseEntity<Account>(account, HttpStatus.OK);
+		}
+	}
 
     @GetMapping("/getAllAccounts")
 	public ResponseEntity<?> getAllAccounts() {
 		List<Account> accounts = accountService.obtenirAllAccounts();
 		
 		if (accounts.isEmpty()) {
-			return new ResponseEntity<String>("Aucun compte", HttpStatusCode.valueOf(500));
+			return new ResponseEntity<String>("Aucun compte", HttpStatusCode.valueOf(404));
 		} else {
 			return new ResponseEntity<List<Account>>(accounts, HttpStatus.OK);
 		}

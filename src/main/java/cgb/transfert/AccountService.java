@@ -18,6 +18,11 @@ public class AccountService {
 	public AccountService(AccountRepository accountRepository) {
 		this.accountRepository = accountRepository;
 	}
+	
+	public Account getAccountById(String id) {
+		Optional<Account> oaccount=accountRepository.findById(id);
+		return oaccount.orElse(null);
+	}
 
 	public List<Account> obtenirAllAccounts() {
 		return accountRepository.findAll();
