@@ -25,6 +25,8 @@ public class TransferController {
 
 
     /**
+     * Fonction qui prend un objet de type TransferRequest en parametre
+     * afin de realiser un transfer entre 2 comptes bancaires
      * 
      * @param transferRequest
      * @return json 
