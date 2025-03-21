@@ -9,7 +9,7 @@ import cgb.transfert.iban.ToolsIban;
 public class ServerTransferApp {
 
 	public static void main(String[] args) {
-		//SpringApplication.run(ServerTransferApp.class, args);    	
+		SpringApplication.run(ServerTransferApp.class, args);    	
 		// TODO Auto-generated method stub	
 		//Tester chargement...
 		

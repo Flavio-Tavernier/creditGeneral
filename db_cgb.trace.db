@@ -7403,3 +7403,6 @@ Caused by: org.h2.mvstore.MVStoreException: The file is locked: D:/Codage/Fiard/
 	at org.h2.mvstore.FileStore.open(FileStore.java:128)
 	at org.h2.mvstore.MVStore.<init>(MVStore.java:452)
 	... 53 more
+2025-03-20 09:03:01 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: L'objet est déjà fermé
+The object is already closed [90007-214]
