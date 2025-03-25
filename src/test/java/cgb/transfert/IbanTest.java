@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 import cgb.transfert.iban.ToolsIban;
-public class MethodTest {
+public class IbanTest {
 
 	
 	
@@ -63,6 +63,19 @@ public class MethodTest {
     	
     	String iban = "FR44123412341234123400";
     	assertEquals(true, outilsIban.isIbanStructureValide(iban), "Structure IBAN invalide");
+    }
+    
+    /**
+     * Methode de test de structure de l IBAN
+     * return void
+     * @throws Exception
+     */
+    @Test
+    public void testIbanStructureInvalide() throws Exception {
+    	ToolsIban outilsIban = ToolsIban.getInstance();
+    	
+    	String iban = "FRR44123412341234123400";
+    	assertEquals(false, outilsIban.isIbanStructureValide(iban), "Structure IBAN valide");
     }
     
     /**
