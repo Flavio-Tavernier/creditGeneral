@@ -8,9 +8,12 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import cgb.classesMetier.account.Account;
+import cgb.classesMetier.account.AccountService;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.Vector;
 
 /**
  * classe de transfer
@@ -22,6 +25,13 @@ public class TransferController {
 
     @Autowired
     private TransferService transferService;
+    
+    private final AccountService accountService;
+
+    @Autowired
+    public TransferController(AccountService accountService) {
+        this.accountService = accountService;
+    }
 
 
     /**
@@ -46,17 +56,29 @@ public class TransferController {
             TransferResponse errorResponse = new TransferResponse("FAILURE", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
-        
-    }  
-
-    /*
-    @PostMapping
-    public ResponseEntity<String> testTransfer(@RequestBody String s) {
-    	System.out.println("Post reçu");
-        return ResponseEntity.ok("Post bien traité: "+ s);
-    } 
-    */
+    }    
     
+    /**
+     * Fonction qui prend un objet de type TransferLotRequest en parametre
+     * afin de realiser un transfer de lot
+     * 
+     * @param TransferLotRequest
+     * @return json 
+     * @throws Exception 
+     */
+    @PostMapping("/createTransferLot")
+    public ResponseEntity<?> createTransferLot(@RequestBody TransferLotRequest transferLotRequest) throws Exception {
+        try {
+        	
+        	this.transferService.gererTransferLot(transferLotRequest);
+        		
+        	return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(transferLotRequest.getLesTransfers());
+    	
+        }catch (RuntimeException e) {
+            TransferResponse errorResponse = new TransferResponse("FAILURE", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
+    }
 }
 
 

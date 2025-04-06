@@ -41,7 +41,7 @@ public class DatabaseInitializer {
 
         Account gsbAccount = new Account();
         gsbAccount.setAccountNumber("456789123");
-        gsbAccount.setSolde(20000.00);
+        gsbAccount.setSolde(200000.00);
         accountRepository.save(gsbAccount);
 
         for (int i = 0; i < 20; i++) {

@@ -11,7 +11,7 @@ public class Account {
     @Id
     private String accountNumber;
 	private Double solde;
-	private Vector<Account> beneficiaires;
+	private Vector<String> beneficiaires = new Vector<String>();
 	
     /**
 	 * Renvoi le solde d'un compte bancaire
@@ -46,12 +46,12 @@ public class Account {
 	}
 
 
-	public Vector<Account> getBeneficiaires()
+	public Vector<String> getBeneficiaires()
 	{
 		return this.beneficiaires;
 	}
 
-	public void setBeneficiaires(Vector<Account> beneficiaires)
+	public void setBeneficiaires(Vector<String> beneficiaires)
 	{
 		this.beneficiaires = beneficiaires;
 	}
@@ -62,10 +62,10 @@ public class Account {
 	 * 
 	 * @param addBeneficiaire
 	 */
-	public void addBeneficiaire(Account beneficiaire) throws Exception
+	public void addBeneficiaire(String beneficiaire) throws Exception
 	{
 		if (this.beneficiaires.contains(beneficiaire)) {
-			throw new Exception("Bénéficiaire " + beneficiaire.getAccountNumber() + 
+			throw new Exception("Bénéficiaire " + beneficiaire + 
 								" déjà existant");
 		} else {
 			this.beneficiaires.add(beneficiaire);

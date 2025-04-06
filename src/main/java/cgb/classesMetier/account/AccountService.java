@@ -38,6 +38,11 @@ public class AccountService {
 	public List<Account> obtenirAllAccounts() {
 		return accountRepository.findAll();
 	}
+	
+	public Account addBeneficiaire(Account accountEmetteur, String beneficiaireAccountNumber) throws Exception {
+		accountEmetteur.addBeneficiaire(beneficiaireAccountNumber);
+		return this.accountRepository.save(accountEmetteur);
+	}
 }
 
 

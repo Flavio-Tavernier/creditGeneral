@@ -1,22 +1,32 @@
 package cgb.classesMetier.transfert;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import cgb.classesMetier.account.Account;
-import cgb.classesMetier.account.AccountRepository;
+import cgb.classesMetier.account.*;
+import cgb.classesMetier.log.Log;
+import cgb.classesMetier.log.LogService;
 import jakarta.transaction.Transactional;
+
+import java.sql.Date;
 import java.time.LocalDate;
+import java.util.Vector;
 
 @Service
 public class TransferService {
 
     @Autowired
     private AccountRepository accountRepository;
+    
+    @Autowired
+    private AccountService accountService;
 
     @Autowired
     private TransferRepository transferRepository;
-
+    
+    @Autowired
+    private LogService logService;
     
     /*
      * Rappel du cours sur les transactions... Tout ou rien
@@ -50,4 +60,62 @@ public class TransferService {
         return transferRepository.save(transfer);
         }
     }
+    
+    
+    @Async
+    public void gererTransferLot(TransferLotRequest transferLotRequest) throws Exception {
+    	Vector<TransferLot> lesTransfers = transferLotRequest.getLesTransfers();
+    	
+    	for (TransferLot unTransfer : lesTransfers) {
+    		String sourceAccountNumber = transferLotRequest.getSourceAccountNumber();
+    		String destAccountNumber = unTransfer.getIbanDest();
+    		
+    		Account sourceAccount = this.accountService.getAccountById(sourceAccountNumber);
+    		
+    		Long lastLogNumber = logService.getLastLogNumber();
+    		
+    		if (sourceAccount.getBeneficiaires().contains(destAccountNumber)) {
+    			this.createTransfer(
+    				sourceAccountNumber,
+    				destAccountNumber,
+    				unTransfer.getAmount(),
+    				transferLotRequest.getTransferDate(),
+                    unTransfer.getDescription()
+				);
+    			
+    			 
+    			Log log = new Log();
+					log.setLogNumber(lastLogNumber);
+					log.setNumLot(transferLotRequest.getNumLot());
+					log.setDateLog(LocalDate.now());
+					log.setDescription("Transfer de : " + unTransfer.getAmount() + "€ du compte : " + sourceAccountNumber + 
+										" vers : " + destAccountNumber);
+					log.setStatus("success");
+    			this.logService.addLog(log);
+    		} else {
+    			Log log = new Log();
+	    			log.setLogNumber(lastLogNumber);
+	    			log.setNumLot(transferLotRequest.getNumLot());
+					log.setDateLog(LocalDate.now());
+					log.setDescription("compte : " + destAccountNumber + " non bénéficiaire de : " + sourceAccountNumber);
+					log.setStatus("canceled");
+					this.logService.addLog(log);
+    		}
+    	}
+        
+    	
+    	
+    	
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }

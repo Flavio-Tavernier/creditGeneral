@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -59,26 +60,55 @@ public class AccountController {
 		}
 	}
 
-
-	@GetMapping("/addBeneficiaire/{iban}")
-	public ResponseEntity<?> addBeneficiaire(@RequestBody String addBeneficiaireRequest) {
+    /**
+     * Route de la classe AccountController permettant
+     * d'ajouter un beneficiaire à un compte bancaire
+     * @param addBeneficiaireRequest
+     * @return
+     * @throws Exception
+     */
+	@PostMapping("/addBeneficiaire")
+	public ResponseEntity<?> addBeneficiaire(@RequestBody AddBeneficiaireRequest addBeneficiaireRequest) throws Exception {
 		try {
 			String sourceAccountNumber = addBeneficiaireRequest.getSourceAccountNumber();
+			String beneficiaireAccountNumber = addBeneficiaireRequest.getBeneficiaireAccountNumber();
+			Account accountEmetteur = this.accountService.getAccountById(sourceAccountNumber);			
+			
+			this.accountService.addBeneficiaire(accountEmetteur, beneficiaireAccountNumber);
 
-			Account accountEmetteur = AccountService.getAccountById(sourceAccountNumber);
-
-			;
-
-
-    	// accountService.addBeneficiaire();
-
-
-    	// return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(transfer);
+			return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(accountEmetteur);
 
         }catch (RuntimeException e) {
-        //     TransferResponse errorResponse = new TransferResponse("FAILURE", e.getMessage());
-        //     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        	AccountResponse errorResponse = new AccountResponse("FAILURE", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
 	}
+}
 
+class AccountResponse {
+    private String status;
+    private String message;
+
+    // Constructeur
+    public AccountResponse(String status, String message) {
+        this.status = status;
+        this.message = message;
+    }
+
+    // Getters et Setters
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 }

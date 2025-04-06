@@ -2,7 +2,7 @@ package cgb.classesMetier.account;
 
 import java.time.LocalDate;
 
-public class addBeneficiaireRequest {
+public class AddBeneficiaireRequest {
     private String sourceAccountNumber;
     private String beneficiaireAccountNumber;
     private LocalDate addDate;
