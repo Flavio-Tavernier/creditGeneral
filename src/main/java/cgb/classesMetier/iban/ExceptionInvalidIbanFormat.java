@@ -1,4 +1,4 @@
-package cgb.transfert.iban;
+package cgb.classesMetier.iban;
 
 public class ExceptionInvalidIbanFormat extends ExceptionInvalideIBAN {
 

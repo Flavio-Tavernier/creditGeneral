@@ -1,4 +1,4 @@
-package cgb.transfert.iban;
+package cgb.classesMetier.iban;
 
 public class CGBIbanValidator {
 	private static CGBIbanValidator instance;
@@ -7,6 +7,12 @@ public class CGBIbanValidator {
 		
 	}
 	
+	/**
+	 * Singleton
+	 * renvoie une instance de la calsse CGBIbanValidator
+	 * 
+	 * @return CGBIbanValidator
+	 */
 	public static CGBIbanValidator getInstance() {
 		return instance != null ? instance : new CGBIbanValidator();
 	}

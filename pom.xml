@@ -54,6 +54,7 @@
 			<groupId>commons-validator</groupId>
 			<artifactId>commons-validator</artifactId>
 			<version>1.7</version>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 	<build>

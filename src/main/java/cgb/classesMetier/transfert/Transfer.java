@@ -1,4 +1,4 @@
-package cgb.transfert;
+package cgb.classesMetier.transfert;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;

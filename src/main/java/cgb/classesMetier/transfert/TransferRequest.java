@@ -1,4 +1,4 @@
-package cgb.transfert;
+package cgb.classesMetier.transfert;
 
 
 import java.time.LocalDate;

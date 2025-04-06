@@ -1,7 +1,10 @@
-package cgb.transfert;
+package cgb.classesMetier.transfert;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import cgb.classesMetier.account.Account;
+import cgb.classesMetier.account.AccountRepository;
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 

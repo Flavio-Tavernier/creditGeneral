@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import cgb.transfert.iban.ToolsIban;
+import cgb.classesMetier.iban.ToolsIban;
 public class IbanTest {
 
 	

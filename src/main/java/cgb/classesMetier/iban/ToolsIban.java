@@ -1,4 +1,4 @@
-package cgb.transfert.iban;
+package cgb.classesMetier.iban;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
