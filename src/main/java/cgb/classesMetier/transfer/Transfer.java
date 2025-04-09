@@ -20,6 +20,7 @@ public class Transfer {
     private String description;
     private String statut;
     @Nullable
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long numLot;
     
     

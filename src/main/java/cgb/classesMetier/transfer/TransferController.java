@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import cgb.classesMetier.account.Account;
 import cgb.classesMetier.account.AccountService;
 import cgb.classesMetier.log.LogService;
-import cgb.classesMetier.transfer.lot.TransferLotRequest;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.Vector;
 
@@ -22,7 +22,7 @@ import java.util.Vector;
  * 
  */
 @RestController
-@RequestMapping("/api/transfers")
+@RequestMapping("/transfers")
 public class TransferController {
 
     @Autowired
@@ -38,6 +38,19 @@ public class TransferController {
     public TransferController(AccountService accountService) {
         this.accountService = accountService;
     }
+    
+    
+    
+    @GetMapping("/getAllTransfers")
+	public ResponseEntity<?> getAllTransfers() {
+		List<Transfer> transfers = this.transferService.getAllTransfers();
+		
+		if (transfers.isEmpty()) {
+			return new ResponseEntity<String>("Aucun transfer", HttpStatusCode.valueOf(404));
+		} else {
+			return new ResponseEntity<List<Transfer>>(transfers, HttpStatus.OK);
+		}
+	}
 
 
     /**
@@ -57,9 +70,8 @@ public class TransferController {
                 transferRequest.getDestinationAccountNumber(),
                 transferRequest.getAmount(),
                 transferRequest.getTransferDate(),
-                transferRequest.getDescription());
-    	
-	    	transfer.setStatut("success");
+                transferRequest.getDescription(),
+                0L);
 	    	
 	    	return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(transfer);
         } catch (RuntimeException e) {
@@ -67,10 +79,42 @@ public class TransferController {
             TransferResponse errorResponse = new TransferResponse("FAILURE", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
-    }    
+    }   
+    
+    
+    
+    /**
+     * Fonction qui prend un objet de type TransferLotRequest en parametre
+     * afin de realiser un transfer de lot
+     * 
+     * @param TransferLotRequest
+     * @return json 
+     * @throws Exception 
+     */
+    @PostMapping("/lot")
+    public ResponseEntity<?> createTransferLot(@RequestBody TransfersLot transferLot ) throws Exception {
+        try {
+        	
+        	return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(this.transferService.createTransferLot(transferLot));
+    	
+        }catch (RuntimeException e) {
+        	e.printStackTrace();
+        	TransferResponse errorResponse = new TransferResponse("FAILURE", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
+    }
+    
+    
+    
+    
+    
     
     
 }
+
+
+
+
 
 
 class TransferResponse {
