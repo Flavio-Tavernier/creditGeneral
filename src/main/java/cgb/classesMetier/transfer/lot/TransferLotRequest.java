@@ -1,12 +1,19 @@
-package cgb.classesMetier.transfert;
+package cgb.classesMetier.transfer.lot;
 
 import java.time.LocalDate;
 import java.util.Vector;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.Data;
 
+@Entity
 @Data
 public class TransferLotRequest {
+	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long numLot;
 	private String sourceAccountNumber;
     private Vector<TransferLot> lesTransfers;

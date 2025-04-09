@@ -15,16 +15,12 @@ public class LogService {
 	{
 		return logRepository.findAll();
 	}
+
 	
-	public long getLastLogNumber()
+	public List<Log> getLogsByNumLot(Long numLot)
 	{
-		return logRepository.count();
+		return logRepository.getLogsByNumLot(numLot);
 	}
-	
-	/*public List<Log> getLogsById(Long numLot)
-	{
-		return logRepository.findAllById(numLot);
-	}*/
 
 	public Log addLog(Log log) 
 	{

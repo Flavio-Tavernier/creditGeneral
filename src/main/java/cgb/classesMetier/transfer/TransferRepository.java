@@ -1,4 +1,4 @@
-package cgb.classesMetier.transfert;
+package cgb.classesMetier.transfer;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

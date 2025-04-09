@@ -1,4 +1,4 @@
-package cgb.classesMetier.transfert;
+package cgb.classesMetier.transfer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import cgb.classesMetier.account.Account;
 import cgb.classesMetier.account.AccountService;
+import cgb.classesMetier.log.LogService;
+import cgb.classesMetier.transfer.lot.TransferLotRequest;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -26,7 +28,11 @@ public class TransferController {
     @Autowired
     private TransferService transferService;
     
-    private final AccountService accountService;
+    @Autowired
+    private LogService logService;
+    
+    @Autowired
+    private AccountService accountService;
 
     @Autowired
     public TransferController(AccountService accountService) {
@@ -43,42 +49,27 @@ public class TransferController {
      */
     @PostMapping("/createTransfer")
     public ResponseEntity<?> createTransfer(@RequestBody TransferRequest transferRequest) {
+    	Transfer transfer = new Transfer();
+    	
         try {
-    	Transfer transfer = transferService.createTransfer(
+        	transfer = transferService.createTransfer(
                 transferRequest.getSourceAccountNumber(),
                 transferRequest.getDestinationAccountNumber(),
                 transferRequest.getAmount(),
                 transferRequest.getTransferDate(),
-                transferRequest.getDescription()
-        );
-    	return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(transfer);
-        }catch (RuntimeException e) {
+                transferRequest.getDescription());
+    	
+	    	transfer.setStatut("success");
+	    	
+	    	return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(transfer);
+        } catch (RuntimeException e) {
+        	transfer.setStatut("canceled");
             TransferResponse errorResponse = new TransferResponse("FAILURE", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
     }    
     
-    /**
-     * Fonction qui prend un objet de type TransferLotRequest en parametre
-     * afin de realiser un transfer de lot
-     * 
-     * @param TransferLotRequest
-     * @return json 
-     * @throws Exception 
-     */
-    @PostMapping("/createTransferLot")
-    public ResponseEntity<?> createTransferLot(@RequestBody TransferLotRequest transferLotRequest) throws Exception {
-        try {
-        	
-        	this.transferService.gererTransferLot(transferLotRequest);
-        		
-        	return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(transferLotRequest.getLesTransfers());
-    	
-        }catch (RuntimeException e) {
-            TransferResponse errorResponse = new TransferResponse("FAILURE", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-        }
-    }
+    
 }
 
 

@@ -1,29 +1,18 @@
-package cgb.classesMetier.transfert;
+package cgb.classesMetier.transfer;
 
-import jakarta.persistence.*;
+
 import java.time.LocalDate;
 import lombok.*;
 
-@Entity
 @Data
-public class Transfer {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-	private String sourceAccountNumber;
+public class TransferRequest {
+    private String sourceAccountNumber;
     private String destinationAccountNumber;
     private Double amount;
     private LocalDate transferDate;
     private String description;
-
-    // Getters and Setters with lombok
     
-    public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
+    
 	public String getSourceAccountNumber() {
 		return sourceAccountNumber;
 	}
@@ -55,4 +44,5 @@ public class Transfer {
 		this.description = description;
 	}
 
+    // Getters and Setters
 }
