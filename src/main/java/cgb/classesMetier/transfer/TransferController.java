@@ -51,6 +51,47 @@ public class TransferController {
 			return new ResponseEntity<List<Transfer>>(transfers, HttpStatus.OK);
 		}
 	}
+    
+    
+    @GetMapping("/getTransfersByNumLotAndStatut/{numLot}/{statut}")
+	public ResponseEntity<?> getTransfersByNumLotAndStatut(@PathVariable long numLot, @PathVariable String statut) {
+    	
+		List<Transfer> transfers = this.transferService.getTransfersByNumLotAndStatut(numLot, statut);
+		
+		if (transfers.isEmpty()) {
+			return new ResponseEntity<String>("Aucun transfer", HttpStatusCode.valueOf(404));
+		} else {
+			return new ResponseEntity<List<Transfer>>(transfers, HttpStatus.OK);
+		}
+	}
+    
+    @GetMapping("/getTransfersByTransferDateBetween/{dateDebut}/{dateFin}")
+	public ResponseEntity<?> getTransfersByTransferDateBetween(@PathVariable LocalDate dateDebut, @PathVariable LocalDate dateFin) {
+    	
+		List<Transfer> transfers = this.transferService.getTransfersByTransferDateBetween(dateDebut, dateFin);
+		
+		if (transfers.isEmpty()) {
+			return new ResponseEntity<String>("Aucun transfer", HttpStatusCode.valueOf(404));
+		} else {
+			return new ResponseEntity<List<Transfer>>(transfers, HttpStatus.OK);
+		}
+	}
+    
+    
+    @GetMapping("/getTransferByDestinationAccountNumber/{destinationAccountNumber}")
+	public ResponseEntity<?> getTransferByDestinationAccountNumber(@PathVariable String destinationAccountNumber) {
+    	
+		List<Transfer> transfers = this.transferService.getTransferByDestinationAccountNumber(destinationAccountNumber);
+		
+		if (transfers.isEmpty()) {
+			return new ResponseEntity<String>("Aucun transfer", HttpStatusCode.valueOf(404));
+		} else {
+			return new ResponseEntity<List<Transfer>>(transfers, HttpStatus.OK);
+		}
+	}
+    
+    
+    
 
 
     /**

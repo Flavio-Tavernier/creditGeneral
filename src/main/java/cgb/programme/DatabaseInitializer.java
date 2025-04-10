@@ -64,7 +64,7 @@ public class DatabaseInitializer {
         int checkDigits = random.nextInt(90) + 10; 
         String bankCode = String.format("%04d", random.nextInt(10000)); 
         String branchCode = String.format("%04d", random.nextInt(10000)); 
-        String accountNumber = String.format("%011d", random.nextLong() % 100000000000L); 
+        String accountNumber = String.format("%011d", random.nextLong(100000000000L)); 
         String key = String.format("%02d", random.nextInt(100)); 
         
         String iban = countryCode + checkDigits + bankCode + branchCode + accountNumber + key;

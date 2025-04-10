@@ -39,6 +39,22 @@ public class TransferService {
     	return this.transferRepository.findAll();
     }
     
+    public List<Transfer> getTransfersByNumLotAndStatut(long numLot, String statut)
+    {
+    	return this.transferRepository.getTransfersByNumLotAndStatut(numLot, statut);
+    }
+    
+    public List<Transfer> getTransfersByTransferDateBetween(LocalDate dateDebut, LocalDate dateFin)
+    {
+    	return this.transferRepository.getTransfersByTransferDateBetween(dateDebut, dateFin);
+    }
+    
+    public List<Transfer> getTransferByDestinationAccountNumber(String destinationAccountNumber)
+    {
+    	return this.transferRepository.getTransferByDestinationAccountNumber(destinationAccountNumber);
+    }
+    
+    
     /*
      * Rappel du cours sur les transactions... Tout ou rien
      */
