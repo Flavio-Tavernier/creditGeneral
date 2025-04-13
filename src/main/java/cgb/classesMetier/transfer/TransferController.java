@@ -28,18 +28,6 @@ public class TransferController {
     @Autowired
     private TransferService transferService;
     
-    @Autowired
-    private LogService logService;
-    
-    @Autowired
-    private AccountService accountService;
-
-    @Autowired
-    public TransferController(AccountService accountService) {
-        this.accountService = accountService;
-    }
-    
-    
     
     @GetMapping("/getAllTransfers")
 	public ResponseEntity<?> getAllTransfers() {
@@ -110,7 +98,6 @@ public class TransferController {
                 transferRequest.getSourceAccountNumber(),
                 transferRequest.getDestinationAccountNumber(),
                 transferRequest.getAmount(),
-                transferRequest.getTransferDate(),
                 transferRequest.getDescription(),
                 0L);
 	    	
@@ -146,7 +133,19 @@ public class TransferController {
     }
     
     
-    
+    @GetMapping("/rejouerVirementCanceledByNumLot/{numLot}/{sourceEmail}")
+	public ResponseEntity<?> rejouerVirementCanceledByNumLot(@PathVariable long numLot, @PathVariable String sourceEmail) {
+        try {
+        	
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(this.transferService.rejouerVirementCanceledByNumLot(numLot, sourceEmail));
+        	
+    	
+        }catch (RuntimeException e) {
+        	e.printStackTrace();
+        	TransferResponse errorResponse = new TransferResponse("FAILURE", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
+	}
     
     
     

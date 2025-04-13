@@ -9098,3 +9098,75 @@ Caused by: org.h2.mvstore.MVStoreException: The file is locked: C:/Users/flavio.
 	at org.h2.mvstore.FileStore.open(FileStore.java:128)
 	at org.h2.mvstore.MVStore.<init>(MVStore.java:452)
 	... 62 more
+2025-04-13 10:56:58 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: L'objet est déjà fermé
+The object is already closed [90007-214]
+2025-04-13 10:56:58 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: L'objet est déjà fermé
+The object is already closed [90007-214]
+2025-04-13 10:58:54 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: L'objet est déjà fermé
+The object is already closed [90007-214]
+2025-04-13 10:58:54 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: L'objet est déjà fermé
+The object is already closed [90007-214]
+2025-04-13 11:00:41 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: L'objet est déjà fermé
+The object is already closed [90007-214]
+2025-04-13 11:00:41 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: L'objet est déjà fermé
+The object is already closed [90007-214]
+2025-04-13 11:11:51 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: L'objet est déjà fermé
+The object is already closed [90007-214]
+2025-04-13 11:11:51 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: L'objet est déjà fermé
+The object is already closed [90007-214]
+2025-04-13 11:41:52 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: L'objet est déjà fermé
+The object is already closed [90007-214]
+2025-04-13 11:41:52 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: L'objet est déjà fermé
+The object is already closed [90007-214]
+2025-04-13 11:42:12 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: L'objet est déjà fermé
+The object is already closed [90007-214]
+2025-04-13 11:42:12 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: L'objet est déjà fermé
+The object is already closed [90007-214]
+2025-04-13 11:42:49 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: L'objet est déjà fermé
+The object is already closed [90007-214]
+2025-04-13 11:42:49 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: L'objet est déjà fermé
+The object is already closed [90007-214]
+2025-04-13 11:42:49 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: L'objet est déjà fermé
+The object is already closed [90007-214]
+2025-04-13 11:42:49 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: L'objet est déjà fermé
+The object is already closed [90007-214]
+2025-04-13 11:43:25 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: L'objet est déjà fermé
+The object is already closed [90007-214]
+2025-04-13 11:43:25 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: L'objet est déjà fermé
+The object is already closed [90007-214]
+2025-04-13 11:43:25 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: L'objet est déjà fermé
+The object is already closed [90007-214]
+2025-04-13 11:43:25 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: L'objet est déjà fermé
+The object is already closed [90007-214]
+2025-04-13 11:43:25 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: L'objet est déjà fermé
+The object is already closed [90007-214]
+2025-04-13 11:43:25 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: L'objet est déjà fermé
+The object is already closed [90007-214]
+2025-04-13 11:43:26 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: L'objet est déjà fermé
+The object is already closed [90007-214]
+2025-04-13 11:43:26 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: L'objet est déjà fermé
+The object is already closed [90007-214]

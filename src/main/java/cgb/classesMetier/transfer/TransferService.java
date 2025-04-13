@@ -1,19 +1,18 @@
 package cgb.classesMetier.transfer;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import cgb.classesMetier.account.*;
-import cgb.classesMetier.log.Log;
-import cgb.classesMetier.log.LogService;
+import cgb.classesMetier.mail.EmailService;
 import jakarta.transaction.Transactional;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Vector;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
@@ -21,15 +20,12 @@ public class TransferService {
 
     @Autowired
     private AccountRepository accountRepository;
-    
-    @Autowired
-    private AccountService accountService;
 
     @Autowired
     private TransferRepository transferRepository;
-    
+
     @Autowired
-    private LogService logService;
+    private EmailService emailService;
     
     
     
@@ -60,7 +56,7 @@ public class TransferService {
      */
     @Transactional
     public Transfer createTransfer(String sourceAccountNumber, String destinationAccountNumber,
-                                   Double amount, LocalDate transferDate, String description, long numLot) 
+                                   Double amount, String description, long numLot) 
     {
         Account sourceAccount = accountRepository.findById(sourceAccountNumber)
                 				.orElseThrow(() -> new RuntimeException("Source account not found"));
@@ -71,7 +67,7 @@ public class TransferService {
         transfer.setSourceAccountNumber(sourceAccountNumber);
         transfer.setDestinationAccountNumber(destinationAccountNumber);
         transfer.setAmount(amount);
-        transfer.setTransferDate(transferDate);
+        transfer.setTransferDate(LocalDate.now());
         transfer.setDescription(description);
         transfer.setNumLot(numLot);
         
@@ -108,12 +104,42 @@ public class TransferService {
 			this.createTransfer(sourceAccountNumber, 
 								destAccountNumber, 
 								unTransfer.amount(), 
-								transfersLot.transferDate(), 
 								unTransfer.description(),
 								numLot);
     	}
+
+        String rapportVirementLot = "Numéro de lot : " + numLot +
+                                    "\nDate : " + transfersLot.transferDate() +
+                                    "\nNombre de transactions échouées : " + this.getTransfersByNumLotAndStatut(numLot, "canceled").size() +
+                                    "\nNombre de transactions réussies : " + this.getTransfersByNumLotAndStatut(numLot, "success").size();
+
+        this.emailService.sendSimpleMessage(transfersLot.sourceEmail(), "Rapport virement lot", rapportVirementLot);
     	
 		return numLot;
+    }
+
+    public String rejouerVirementCanceledByNumLot(long numLot, String sourceEmail)
+    {
+        List<Transfer> transfersCanceled = this.getTransfersByNumLotAndStatut(numLot, "canceled");
+
+        for (Transfer unTransfer : transfersCanceled) {
+    		String sourceAccountNumber = unTransfer.getSourceAccountNumber();
+    		String destAccountNumber = unTransfer.getDestinationAccountNumber();
+    		
+			this.createTransfer(sourceAccountNumber, 
+								destAccountNumber, 
+								unTransfer.getAmount(),
+								unTransfer.getDescription(),
+								numLot);
+    	}
+
+        String rapportVirementLot = "Numéro de lot : " + numLot +
+                                    "\nDate : " + LocalDate.now() +
+                                    "\nNombre de transactions échouées : " + this.getTransfersByNumLotAndStatut(numLot, "canceled").size() +
+                                    "\nNombre de transactions réussies : " + this.getTransfersByNumLotAndStatut(numLot, "success").size();
+
+        this.emailService.sendSimpleMessage(sourceEmail, "Rapport virement lot", rapportVirementLot);
+        return rapportVirementLot;
     }
     	
 }  
