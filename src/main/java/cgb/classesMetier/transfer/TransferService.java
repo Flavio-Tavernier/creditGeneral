@@ -1,6 +1,7 @@
 package cgb.classesMetier.transfer;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
@@ -58,19 +60,19 @@ public class TransferService {
     public Transfer createTransfer(String sourceAccountNumber, String destinationAccountNumber,
                                    Double amount, String description, long numLot) 
     {
-        Account sourceAccount = accountRepository.findById(sourceAccountNumber)
-                				.orElseThrow(() -> new RuntimeException("Source account not found"));
-        Account destinationAccount = accountRepository.findById(destinationAccountNumber)
-                				.orElseThrow(() -> new RuntimeException("Destination account not found"));
+    	Account sourceAccount = accountRepository.findById(sourceAccountNumber)
+				.orElseThrow(() -> new RuntimeException("Source account not found"));
+    	Account destinationAccount = accountRepository.findById(destinationAccountNumber)
+				.orElseThrow(() -> new RuntimeException("Destination account not found"));
 
-        Transfer transfer = new Transfer();
+		Transfer transfer = new Transfer();
         transfer.setSourceAccountNumber(sourceAccountNumber);
         transfer.setDestinationAccountNumber(destinationAccountNumber);
         transfer.setAmount(amount);
         transfer.setTransferDate(LocalDate.now());
         transfer.setDescription(description);
         transfer.setNumLot(numLot);
-        
+
         if (sourceAccount.getSolde().compareTo(amount) < 0) {
         	transfer.setStatut("canceled");
         } else if (!sourceAccount.getBeneficiaires().contains(destinationAccountNumber)) {	
@@ -121,16 +123,11 @@ public class TransferService {
     public String rejouerVirementCanceledByNumLot(long numLot, String sourceEmail)
     {
         List<Transfer> transfersCanceled = this.getTransfersByNumLotAndStatut(numLot, "canceled");
+        
+        
 
         for (Transfer unTransfer : transfersCanceled) {
-    		String sourceAccountNumber = unTransfer.getSourceAccountNumber();
-    		String destAccountNumber = unTransfer.getDestinationAccountNumber();
-    		
-			this.createTransfer(sourceAccountNumber, 
-								destAccountNumber, 
-								unTransfer.getAmount(),
-								unTransfer.getDescription(),
-								numLot);
+			this.rejouerTransfer(unTransfer.getId());
     	}
 
         String rapportVirementLot = "Numéro de lot : " + numLot +
@@ -140,6 +137,34 @@ public class TransferService {
 
         this.emailService.sendSimpleMessage(sourceEmail, "Rapport virement lot", rapportVirementLot);
         return rapportVirementLot;
+    }
+    
+    public void rejouerTransfer(long idTransfer)
+    {
+    	Transfer transfer = this.transferRepository.findById(idTransfer)
+				.orElseThrow(() -> new RuntimeException("Transfer not found"));
+    	Account sourceAccount = accountRepository.findById(transfer.getSourceAccountNumber())
+				.orElseThrow(() -> new RuntimeException("Source account not found"));
+    	Account destinationAccount = accountRepository.findById(transfer.getDestinationAccountNumber())
+				.orElseThrow(() -> new RuntimeException("Destination account not found"));
+    	
+    	
+    	if (sourceAccount.getSolde().compareTo(transfer.getAmount()) < 0) {
+        	transfer.setStatut("canceled");
+        } else if (!sourceAccount.getBeneficiaires().contains(transfer.getDestinationAccountNumber())) {	
+	        transfer.setStatut("canceled");
+        }
+        else {
+
+        	sourceAccount.setSolde(sourceAccount.getSolde()-(transfer.getAmount()));
+	        destinationAccount.setSolde(destinationAccount.getSolde()+(transfer.getAmount()));
+	
+	        accountRepository.save(sourceAccount);
+	        accountRepository.save(destinationAccount);
+	
+	        transfer.setStatut("success");
+	        transferRepository.save(transfer);
+        }
     }
     	
 }  
