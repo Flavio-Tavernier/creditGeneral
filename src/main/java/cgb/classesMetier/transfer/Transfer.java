@@ -20,7 +20,7 @@ public class Transfer {
     private String description;
     private String statut;
     @Nullable
-    private long numLot;
+    private String refLot;
     
     
     
@@ -70,10 +70,10 @@ public class Transfer {
 	public void setStatut(String statut) {
 		this.statut = statut;
 	}
-	public long getNumLot() {
-		return numLot;
+	public String getRefLot() {
+		return refLot;
 	}
-	public void setNumLot(long numLot) {
-		this.numLot = numLot;
+	public void setRefLot(String refLot) {
+		this.refLot = refLot;
 	}
 }

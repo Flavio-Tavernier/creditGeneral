@@ -37,9 +37,9 @@ public class TransferService {
     	return this.transferRepository.findAll();
     }
     
-    public List<Transfer> getTransfersByNumLotAndStatut(long numLot, String statut)
+    public List<Transfer> getTransfersByRefLotAndStatut(String refLot, String statut)
     {
-    	return this.transferRepository.getTransfersByNumLotAndStatut(numLot, statut);
+    	return this.transferRepository.getTransfersByRefLotAndStatut(refLot, statut);
     }
     
     public List<Transfer> getTransfersByTransferDateBetween(LocalDate dateDebut, LocalDate dateFin)
@@ -58,7 +58,7 @@ public class TransferService {
      */
     @Transactional
     public Transfer createTransfer(String sourceAccountNumber, String destinationAccountNumber,
-                                   Double amount, String description, long numLot) 
+                                   Double amount, String description, String refLot) 
     {
     	Account sourceAccount = accountRepository.findById(sourceAccountNumber)
 				.orElseThrow(() -> new RuntimeException("Source account not found"));
@@ -71,7 +71,7 @@ public class TransferService {
         transfer.setAmount(amount);
         transfer.setTransferDate(LocalDate.now());
         transfer.setDescription(description);
-        transfer.setNumLot(numLot);
+        transfer.setRefLot(refLot);
 
         if (sourceAccount.getSolde().compareTo(amount) < 0) {
         	transfer.setStatut("canceled");
@@ -94,10 +94,10 @@ public class TransferService {
     
     
     @Async
-    public long createTransferLot(TransfersLot transfersLot) throws Exception {
+    public String createTransferLot(TransfersLot transfersLot) throws Exception {
     	List<UnTransferDuLot> lesTransfers = transfersLot.lesTransfers();
     	
-    	long numLot = ThreadLocalRandom.current().nextLong(1000000000L, 9999999999999L); 
+    	String refLot = transfersLot.refLot();
     	
     	for (UnTransferDuLot unTransfer : lesTransfers) {
     		String sourceAccountNumber = transfersLot.sourceAccountNumber();
@@ -107,22 +107,22 @@ public class TransferService {
 								destAccountNumber, 
 								unTransfer.amount(), 
 								unTransfer.description(),
-								numLot);
+								refLot);
     	}
 
-        String rapportVirementLot = "Numéro de lot : " + numLot +
-                                    "\nDate : " + transfersLot.transferDate() +
-                                    "\nNombre de transactions échouées : " + this.getTransfersByNumLotAndStatut(numLot, "canceled").size() +
-                                    "\nNombre de transactions réussies : " + this.getTransfersByNumLotAndStatut(numLot, "success").size();
+        String rapportVirementLot = "Numéro de lot : " + refLot +
+                                    "\nDate : " + LocalDate.now() +
+                                    "\nNombre de transactions échouées : " + this.getTransfersByRefLotAndStatut(refLot, "canceled").size() +
+                                    "\nNombre de transactions réussies : " + this.getTransfersByRefLotAndStatut(refLot, "success").size();
 
         this.emailService.sendSimpleMessage(transfersLot.sourceEmail(), "Rapport virement lot", rapportVirementLot);
     	
-		return numLot;
+		return refLot;
     }
 
-    public String rejouerVirementCanceledByNumLot(long numLot, String sourceEmail)
+    public String rejouerVirementCanceledByRefLot(String refLot, String sourceEmail)
     {
-        List<Transfer> transfersCanceled = this.getTransfersByNumLotAndStatut(numLot, "canceled");
+        List<Transfer> transfersCanceled = this.getTransfersByRefLotAndStatut(refLot, "canceled");
         
         
 
@@ -130,10 +130,10 @@ public class TransferService {
 			this.rejouerTransfer(unTransfer.getId());
     	}
 
-        String rapportVirementLot = "Numéro de lot : " + numLot +
+        String rapportVirementLot = "Numéro de lot : " + refLot +
                                     "\nDate : " + LocalDate.now() +
-                                    "\nNombre de transactions échouées : " + this.getTransfersByNumLotAndStatut(numLot, "canceled").size() +
-                                    "\nNombre de transactions réussies : " + this.getTransfersByNumLotAndStatut(numLot, "success").size();
+                                    "\nNombre de transactions échouées : " + this.getTransfersByRefLotAndStatut(refLot, "canceled").size() +
+                                    "\nNombre de transactions réussies : " + this.getTransfersByRefLotAndStatut(refLot, "success").size();
 
         this.emailService.sendSimpleMessage(sourceEmail, "Rapport virement lot", rapportVirementLot);
         return rapportVirementLot;

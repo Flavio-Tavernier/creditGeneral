@@ -1,10 +1,9 @@
 package cgb.classesMetier.transfer;
 
-import java.time.LocalDate;
 import java.util.List;
 
-public record TransfersLot(String sourceAccountNumber,
+public record TransfersLot(String refLot,
+							String sourceAccountNumber,
 							String sourceEmail,
 							List<UnTransferDuLot> lesTransfers,
-							LocalDate transferDate,
 							String description) {}

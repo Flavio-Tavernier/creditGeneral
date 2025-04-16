@@ -41,10 +41,10 @@ public class TransferController {
 	}
     
     
-    @GetMapping("/getTransfersByNumLotAndStatut/{numLot}/{statut}")
-	public ResponseEntity<?> getTransfersByNumLotAndStatut(@PathVariable long numLot, @PathVariable String statut) {
+    @GetMapping("/getTransfersByRefLotAndStatut/{refLot}/{statut}")
+	public ResponseEntity<?> getTransfersByNumLotAndStatut(@PathVariable String refLot, @PathVariable String statut) {
     	
-		List<Transfer> transfers = this.transferService.getTransfersByNumLotAndStatut(numLot, statut);
+		List<Transfer> transfers = this.transferService.getTransfersByRefLotAndStatut(refLot, statut);
 		
 		if (transfers.isEmpty()) {
 			return new ResponseEntity<String>("Aucun transfer", HttpStatusCode.valueOf(404));
@@ -99,7 +99,7 @@ public class TransferController {
                 transferRequest.getDestinationAccountNumber(),
                 transferRequest.getAmount(),
                 transferRequest.getDescription(),
-                0L);
+                "");
 	    	
 	    	return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(transfer);
         } catch (RuntimeException e) {
@@ -122,10 +122,8 @@ public class TransferController {
     @PostMapping("/lot")
     public ResponseEntity<?> createTransferLot(@RequestBody TransfersLot transferLot ) throws Exception {
         try {
-        	
         	return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(this.transferService.createTransferLot(transferLot));
-    	
-        }catch (RuntimeException e) {
+        } catch (RuntimeException e) {
         	e.printStackTrace();
         	TransferResponse errorResponse = new TransferResponse("FAILURE", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
@@ -133,11 +131,11 @@ public class TransferController {
     }
     
     
-    @GetMapping("/rejouerVirementCanceledByNumLot/{numLot}/{sourceEmail}")
-	public ResponseEntity<?> rejouerVirementCanceledByNumLot(@PathVariable long numLot, @PathVariable String sourceEmail) {
+    @GetMapping("/rejouerVirementCanceledByRefLot/{refLot}/{sourceEmail}")
+	public ResponseEntity<?> rejouerVirementCanceledByRefLot(@PathVariable String refLot, @PathVariable String sourceEmail) {
         try {
         	
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(this.transferService.rejouerVirementCanceledByNumLot(numLot, sourceEmail));
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(this.transferService.rejouerVirementCanceledByRefLot(refLot, sourceEmail));
         	
     	
         }catch (RuntimeException e) {
