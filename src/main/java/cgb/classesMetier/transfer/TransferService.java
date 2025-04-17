@@ -1,21 +1,18 @@
 package cgb.classesMetier.transfer;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import cgb.classesMetier.account.*;
 import cgb.classesMetier.mail.EmailService;
+import cgb.classesMetier.transfer.lot.TransfersLot;
+import cgb.classesMetier.transfer.lot.UnTransferDuLot;
 import jakarta.transaction.Transactional;
 
-import java.sql.Date;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 public class TransferService {
@@ -37,11 +34,16 @@ public class TransferService {
     	return this.transferRepository.findAll();
     }
     
+    public List<Transfer> getTransfersByRefLot(String refLot)
+    {
+    	return this.transferRepository.getTransfersByRefLot(refLot);
+    }
+
     public List<Transfer> getTransfersByRefLotAndStatut(String refLot, String statut)
     {
     	return this.transferRepository.getTransfersByRefLotAndStatut(refLot, statut);
     }
-    
+
     public List<Transfer> getTransfersByTransferDateBetween(LocalDate dateDebut, LocalDate dateFin)
     {
     	return this.transferRepository.getTransfersByTransferDateBetween(dateDebut, dateFin);
@@ -92,32 +94,67 @@ public class TransferService {
         return transferRepository.save(transfer);
     }
     
+    @Transactional
+    public Transfer updateTransfer(Long id, String sourceAccountNumber) {
+        Transfer transfer = transferRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Transfer not found"));
+        transfer.setSourceAccountNumber(sourceAccountNumber);
+        
+        Account sourceAccount = accountRepository.findById(transfer.getSourceAccountNumber())
+				.orElseThrow(() -> new RuntimeException("Source account not found"));
+    	Account destinationAccount = accountRepository.findById(transfer.getDestinationAccountNumber())
+				.orElseThrow(() -> new RuntimeException("Destination account not found"));
+
+        if (sourceAccount.getSolde().compareTo(transfer.getAmount()) < 0) {
+        	transfer.setStatut("canceled");
+        } else if (!sourceAccount.getBeneficiaires().contains(transfer.getDestinationAccountNumber())) {	
+	        transfer.setStatut("canceled");
+        }
+        else {
+
+	        sourceAccount.setSolde(sourceAccount.getSolde()-(transfer.getAmount())); 
+	        destinationAccount.setSolde(destinationAccount.getSolde()+(transfer.getAmount()));
+	
+	        accountRepository.save(sourceAccount);
+	        accountRepository.save(destinationAccount);
+	
+	        transfer.setStatut("success");
+        }
+        
+        return transferRepository.save(transfer);
+    }
     
     @Async
     public String createTransferLot(TransfersLot transfersLot) throws Exception {
-    	List<UnTransferDuLot> lesTransfers = transfersLot.lesTransfers();
-    	
-    	String refLot = transfersLot.refLot();
-    	
-    	for (UnTransferDuLot unTransfer : lesTransfers) {
-    		String sourceAccountNumber = transfersLot.sourceAccountNumber();
-    		String destAccountNumber = unTransfer.ibanDest();
-    		
-			this.createTransfer(sourceAccountNumber, 
-								destAccountNumber, 
-								unTransfer.amount(), 
-								unTransfer.description(),
-								refLot);
-    	}
+        new Thread(() -> {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
-        String rapportVirementLot = "Numéro de lot : " + refLot +
-                                    "\nDate : " + LocalDate.now() +
-                                    "\nNombre de transactions échouées : " + this.getTransfersByRefLotAndStatut(refLot, "canceled").size() +
-                                    "\nNombre de transactions réussies : " + this.getTransfersByRefLotAndStatut(refLot, "success").size();
-
-        this.emailService.sendSimpleMessage(transfersLot.sourceEmail(), "Rapport virement lot", rapportVirementLot);
+            
+                List<Transfer> lesTransfersDuLot = transfersLot.getLesTransfers();
+                ArrayList<Transfer> lesTransfersEnrichis = new ArrayList<Transfer>();
     	
-		return refLot;
+                String refLot = transfersLot.getRefLot();
+                
+                for (Transfer unTransfer : lesTransfersDuLot) {
+                    lesTransfersEnrichis.add(this.updateTransfer(unTransfer.getId(), transfersLot.getSourceAccountNumber()));
+                }
+                transfersLot.setLesTransfers(lesTransfersEnrichis);
+        
+                String rapportVirementLot = "Numéro de lot : " + refLot +
+                                            "\nDate : " + LocalDate.now() +
+                                            "\nNombre de transactions échouées : " + this.getTransfersByRefLotAndStatut(refLot, "canceled").size() +
+                                            "\nNombre de transactions réussies : " + this.getTransfersByRefLotAndStatut(refLot, "success").size();
+        
+                this.emailService.sendSimpleMessage(transfersLot.getSourceEmail(), "Rapport virement lot", rapportVirementLot);
+                
+
+        }).start();
+    	
+		return "refLot";
     }
 
     public String rejouerVirementCanceledByRefLot(String refLot, String sourceEmail)

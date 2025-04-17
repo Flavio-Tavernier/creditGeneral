@@ -1,6 +1,8 @@
 package cgb.classesMetier.transfer;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -11,9 +13,14 @@ import org.springframework.web.bind.annotation.*;
 import cgb.classesMetier.account.Account;
 import cgb.classesMetier.account.AccountService;
 import cgb.classesMetier.log.LogService;
+import cgb.classesMetier.transfer.lot.TransfersLot;
+import cgb.classesMetier.transfer.lot.TransfersLotRepository;
+import cgb.classesMetier.transfer.lot.TransfersLotService;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Vector;
 
@@ -27,6 +34,12 @@ public class TransferController {
 
     @Autowired
     private TransferService transferService;
+
+    @Autowired
+    private TransfersLotService transfersLotService;
+
+    @Autowired
+    private TransfersLotRepository transfersLotRepository;
     
     
     @GetMapping("/getAllTransfers")
@@ -120,9 +133,27 @@ public class TransferController {
      * @throws Exception 
      */
     @PostMapping("/lot")
-    public ResponseEntity<?> createTransferLot(@RequestBody TransfersLot transferLot ) throws Exception {
+    public ResponseEntity<?> createTransferLot(@RequestBody TransfersLot transferLot) throws Exception {
+
         try {
-        	return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(this.transferService.createTransferLot(transferLot));
+            Map<String, Object> response = new HashMap<>();
+            response.put("refLot", transferLot.getRefLot());
+            response.put("dateLancement", LocalDate.now());
+            
+            if (this.transfersLotService.getLotByRefLot(transferLot.getRefLot()) == null) {
+                
+
+                this.transferService.createTransferLot(transferLot);
+                this.transfersLotRepository.save(transferLot);
+                response.put("message", "Traitement lancé");
+                response.put("etat", "waiting"); 
+            } else {
+                response.put("message", "Traitement arrêté, refLot déjà existante");
+                response.put("etat", "canceled"); 
+            }
+               
+
+        	return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(response);
         } catch (RuntimeException e) {
         	e.printStackTrace();
         	TransferResponse errorResponse = new TransferResponse("FAILURE", e.getMessage());

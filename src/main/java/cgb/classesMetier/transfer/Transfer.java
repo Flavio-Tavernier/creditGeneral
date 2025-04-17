@@ -16,7 +16,7 @@ public class Transfer {
 	private String sourceAccountNumber;
     private String destinationAccountNumber;
     private Double amount;
-    private LocalDate transferDate;
+    private LocalDate transferDate = LocalDate.now();
     private String description;
     private String statut;
     @Nullable
