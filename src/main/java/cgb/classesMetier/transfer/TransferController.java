@@ -141,8 +141,6 @@ public class TransferController {
             response.put("dateLancement", LocalDate.now());
             
             if (this.transfersLotService.getLotByRefLot(transferLot.getRefLot()) == null) {
-                
-
                 this.transferService.createTransferLot(transferLot);
                 this.transfersLotRepository.save(transferLot);
                 response.put("message", "Traitement lancé");

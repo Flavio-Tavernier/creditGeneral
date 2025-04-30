@@ -95,11 +95,12 @@ public class TransferService {
     }
     
     @Transactional
-    public Transfer updateTransfer(Long id, String sourceAccountNumber) {
-        Transfer transfer = transferRepository.findById(id)
+    public Transfer updateTransfer(Long idTransfer, String sourceAccountNumber) {   
+        Transfer transfer = transferRepository.findById(idTransfer)
 				.orElseThrow(() -> new RuntimeException("Transfer not found"));
-        transfer.setSourceAccountNumber(sourceAccountNumber);
         
+        transfer.setSourceAccountNumber(sourceAccountNumber);
+                
         Account sourceAccount = accountRepository.findById(transfer.getSourceAccountNumber())
 				.orElseThrow(() -> new RuntimeException("Source account not found"));
     	Account destinationAccount = accountRepository.findById(transfer.getDestinationAccountNumber())
@@ -139,7 +140,10 @@ public class TransferService {
     	
                 String refLot = transfersLot.getRefLot();
                 
-                for (Transfer unTransfer : lesTransfersDuLot) {
+                
+                for (Transfer unTransfer : lesTransfersDuLot) { 
+                	unTransfer.setRefLot(refLot);
+                	this.transferRepository.save(unTransfer);
                     lesTransfersEnrichis.add(this.updateTransfer(unTransfer.getId(), transfersLot.getSourceAccountNumber()));
                 }
                 transfersLot.setLesTransfers(lesTransfersEnrichis);

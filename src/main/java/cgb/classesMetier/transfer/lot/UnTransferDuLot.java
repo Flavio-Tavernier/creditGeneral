@@ -15,7 +15,7 @@ public class UnTransferDuLot {
     private Long id;
 
     private double amount;
-    private String ibanDest;
+    private String destinationAccountNumber;
     private String description;
 
     public UnTransferDuLot() {}
@@ -37,12 +37,12 @@ public class UnTransferDuLot {
         this.amount = amount;
     }
 
-    public String getIbanDest() {
-        return ibanDest;
+    public String getDestinationAccountNumber() {
+        return destinationAccountNumber;
     }
 
-    public void setIbanDest(String ibanDest) {
-        this.ibanDest = ibanDest;
+    public void setDestinationAccountNumber(String destinationAccountNumber) {
+        this.destinationAccountNumber = destinationAccountNumber;
     }
 
     public String getDescription() {
