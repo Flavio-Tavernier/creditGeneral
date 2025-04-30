@@ -1,0 +1,11 @@
+0. Modifier la Classe transfer pour y ajouter un attribut statut (annulé, réussi, etc...) et un attribut nullable de type UUID numéroDeLot
+
+1. Gestion classique des transfers
+
+2. Dans ton transferController tu ajoute une route ("/lot") qui accepte en entrée un Record: TransferRequest
+
+3. Cette route appelle une méthode dans ton transferService sauvegardeLotTransfer(TransferRequest transferRequest)
+
+4. Cette méthode va réaliser les transfers un à un en leur donnant un attribut de lot unique (tu génère un UUID)
+
+5. GG WP NO RE NOOB!
