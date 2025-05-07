@@ -8,10 +8,7 @@ import cgb.classesMetier.iban.ToolsIban;
 public class IbanTest {
 
 	
-	
-	
-	
-	
+
 	
 	/**
      * Methode de test de recuperation du code pays dans un IBAN

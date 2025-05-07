@@ -83,6 +83,31 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
 	}
+	
+	
+
+	@PostMapping("/createAccount")
+	public ResponseEntity<?> createAccount(@RequestBody AccountDTO accountDTO) throws Exception {
+		try {
+			return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(this.accountService.createAccount(accountDTO));
+        } catch (Exception e) {
+        	AccountResponse errorResponse = new AccountResponse("FAILURE", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
+	}
+	
+	@GetMapping("/deleteAcccount/{accountNumber}")
+	public ResponseEntity<?> deleteAcccount(@PathVariable String accountNumber) throws Exception {
+		try {
+			return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(this.accountService.deleteAccount(accountNumber));
+        } catch (Exception e) {
+        	AccountResponse errorResponse = new AccountResponse("FAILURE", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
+	}
+	
+	
+	
 }
 
 class AccountResponse {

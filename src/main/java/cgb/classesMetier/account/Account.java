@@ -13,6 +13,8 @@ public class Account {
 	private Double solde;
 	private Vector<String> beneficiaires = new Vector<String>();
 	
+	public Account() {}
+	
     /**
 	 * Renvoi le solde d'un compte bancaire
 	 * @return Double

@@ -5,6 +5,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import cgb.classesMetier.account.*;
+import cgb.classesMetier.log.Log;
+import cgb.classesMetier.log.LogService;
 import cgb.classesMetier.mail.EmailService;
 import cgb.classesMetier.transfer.lot.TransfersLot;
 import cgb.classesMetier.transfer.lot.UnTransferDuLot;
@@ -26,6 +28,9 @@ public class TransferService {
     @Autowired
     private EmailService emailService;
     
+    
+    @Autowired
+    private LogService logService;
     
     
     
@@ -90,6 +95,14 @@ public class TransferService {
 	
 	        transfer.setStatut("success");
         }
+        
+        Log log = new Log();
+        log.setNumLot(0);
+        log.setDateLog(LocalDate.now());
+        log.setDescription("creation transfer");
+        log.setStatus(transfer.getStatut());
+        
+        this.logService.addLog(log);
         
         return transferRepository.save(transfer);
     }

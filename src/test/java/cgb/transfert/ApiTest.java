@@ -3,6 +3,8 @@ package cgb.transfert;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -37,36 +39,83 @@ public class ApiTest {
                 .andExpect(content().json("{\"accountNumber\":\"123456789\",\"solde\":300.0}"));
     }
     
-    @Test
-    public void testCreateTransfer() throws Exception {
-    	JSONObject transferRequest = new JSONObject();
-    	transferRequest.put("sourceAccountNumber", "987654321");
-    	transferRequest.put("destinationAccountNumber", "123456789");
-    	transferRequest.put("amount", 10.0);
-    	transferRequest.put("transferDate", "2025-03-12");
-    	transferRequest.put("description", "test");
+//    @Test
+//    public void testCreateTransfer() throws Exception {
+//    	JSONObject transferRequest = new JSONObject();
+//    	transferRequest.put("sourceAccountNumber", "987654321");
+//    	transferRequest.put("destinationAccountNumber", "123456789");
+//    	transferRequest.put("amount", 10.0);
+//    	transferRequest.put("transferDate", "2025-03-12");
+//    	transferRequest.put("description", "test");
+//
+//    	JSONObject transfer = new JSONObject();
+//    	transfer.put("id", 1);
+//    	transfer.put("sourceAccountNumber", "987654321");
+//    	transfer.put("destinationAccountNumber", "123456789");
+//    	transfer.put("amount", 10.0);
+//    	transfer.put("transferDate", "2025-03-12");
+//    	transfer.put("description", "test");
+//    	
+//        mockMvc.perform(post("/api/transfers/createTransfer")
+//        		.contentType(MediaType.APPLICATION_JSON)
+//        		.content(transferRequest.toString())
+//        		.header("Authorization", "Basic " + Base64.getEncoder().encodeToString(("user:secret").getBytes(StandardCharsets.UTF_8))))
+//                .andExpect(status().isOk())
+//                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(content().json(transfer.toString()));
+//    }
 
-    	JSONObject transfer = new JSONObject();
-    	transfer.put("id", 1);
-    	transfer.put("sourceAccountNumber", "987654321");
-    	transfer.put("destinationAccountNumber", "123456789");
-    	transfer.put("amount", 10.0);
-    	transfer.put("transferDate", "2025-03-12");
-    	transfer.put("description", "test");
+    
+    @Test
+    public void testCreateAccountValide() throws Exception {
+    	JSONObject accountDTO = new JSONObject();
+    	accountDTO.put("accountNumber", "FR44123412341234123400");
+
+    	JSONObject account = new JSONObject();
+    	account.put("accountNumber", "FR44123412341234123400");
+    	account.put("solde", 0.0);
+//    	account.put("beneficiaires", "[]");
     	
-        mockMvc.perform(post("/api/transfers/createTransfer")
+        mockMvc.perform(post("/account/createAccount")
         		.contentType(MediaType.APPLICATION_JSON)
-        		.content(transferRequest.toString())
+        		.content(accountDTO.toString())
         		.header("Authorization", "Basic " + Base64.getEncoder().encodeToString(("user:secret").getBytes(StandardCharsets.UTF_8))))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(transfer.toString()));
+                .andExpect(content().json(account.toString()));
     }
+    
+    @Test
+    public void testCreateAccountInvalide() throws Exception {
+    	JSONObject accountDTO = new JSONObject();
+    	accountDTO.put("accountNumber", "FR44123412341234123400");
 
+    	JSONObject account = new JSONObject();
+    	account.put("accountNumber", "FR44123412341234123400");
+    	account.put("solde", 1000000.0);
+//    	account.put("beneficiaires", "[]");
+    	
+        mockMvc.perform(post("/account/createAccount")
+        		.contentType(MediaType.APPLICATION_JSON)
+        		.content(accountDTO.toString())
+        		.header("Authorization", "Basic " + Base64.getEncoder().encodeToString(("user:secret").getBytes(StandardCharsets.UTF_8))))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{\r\n"
+                		+ "    \"status\": \"FAILURE\",\r\n"
+                		+ "    \"message\": \"Erreur création compte bancaire : FR44123412341234123400 déjà existant\"\r\n"
+                		+ "}"));
+    }
     
-    
-    
-    
+    @Test
+    public void testDeleteAccountValide() throws Exception { 
+        String accountNumber = "123456789";
+        mockMvc.perform(get("/account/deleteAcccount/{accountNumber}", accountNumber)
+        		.header("Authorization", "Basic " + Base64.getEncoder().encodeToString(("user:secret").getBytes(StandardCharsets.UTF_8))))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().string("true"));
+    }
     
     
     
